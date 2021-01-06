@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div id="loading">
+    <img src="~/images/loading.gif" alt="loading..." />
+</div>
+
+@Ajax.ActionLink("Ürünleri Yükle", "UrunleriGetir", "Urunler", new { ara = "i" }, new AjaxOptions { HttpMethod = "post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "hedef"})
+
+@using (Ajax.BeginForm("UrunleriGetir", "Urunler", null, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "hedef", OnBegin = "showLoading", OnComplete = "hideLoading" }))
+{
+    @Html.TextBox("ara")
+    <button type="submit" class="btn-link">İçeren Ürünleri Getir</button>
+}
+
+<div id="hedef" class="well">
+    Buralar çok değerlenecek...
+</div>
+
+<input type="text" id="ilebas" />
+<a href="#" id="btnGetir">İle Başlayanları Getir</a>
+
+@section scripts{
+    <script>
+        $("#btnGetir").click(function () {
+            $("#loading").show();
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("UrunleriGetirIleBaslayan","Urunler")",
+                data: { ara: $("#ilebas").val() }
+            })
+                .done(function (msg) {
+                    $("#loading").hide();
+                    $("#hedef").html(msg);
+                })
+        })
+
+        function showLoading(){
+            $("#loading").show();
+        }
+
+        function hideLoading(){
+            $("#loading").hide();
+        }
+    </script>
+}
